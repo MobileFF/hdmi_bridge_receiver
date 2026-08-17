@@ -1,0 +1,20 @@
+# ビルド成果物
+build/
+build_diag/
+*.elf
+*.bin
+*.hex
+*.dis
+*.map
+
+# *.uf2は原則無視するが、firmware/配下は公開用に意図的にコミットする
+*.uf2
+!firmware/*.uf2
+
+# Python
+__pycache__/
+*.pyc
+
+# エディタ/OS
+.DS_Store
+*.swp
