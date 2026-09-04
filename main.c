@@ -744,8 +744,21 @@ static void __not_in_flash_func(core1_copy_loop)(void) {
         int left_margin = (SCREEN_W - win_w) / 2;
         int top_margin  = (SCREEN_H - win_h) / 2;
 
-        marker_toggle = !marker_toggle;
-        draw_marker(marker_toggle ? 0xE0 /* 赤 */ : 0x1C /* 緑 */);
+        // 2026-09: 受信確認用マーカーは、実際のゲーム画面(KIND_PIXEL、
+        // bpp=4のパレット方式)の間はもう表示しない — 起動直後のROM選択
+        // メニューやランタイムメニュー(MenuCanvas、bpp=8のRAW332方式)は
+        // 引き続き交互の色でトグルし、それ以外(ゲームプレイ中)は左上を
+        // 黒で塗り続けて隠す。プロトコル変更なしで、既存ヘッダーのbppを
+        // 「メニュー画面かどうか」の判定に流用しているだけ — 送信側
+        // (msx_render_to_hdmi()=bpp4はゲーム専用、msx_render_to_hdmi_
+        // raw332()=bpp8はメニュー専用、どちらもmsx_core.c参照)は元々
+        // この使い分けをしていたので変更不要。
+        if (kind == KIND_PIXEL && meta.bpp == 8) {
+            marker_toggle = !marker_toggle;
+            draw_marker(marker_toggle ? 0xE0 /* 赤 */ : 0x1C /* 緑 */);
+        } else {
+            draw_marker(0x00); // 黒で隠す(ゲームプレイ中は毎フレーム上書き)
+        }
 
         int cur_ww = width * scale;
         int cur_wh = height * scale;

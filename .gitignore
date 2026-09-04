@@ -18,3 +18,7 @@ __pycache__/
 # エディタ/OS
 .DS_Store
 *.swp
+
+# 検討用メモ(コミット対象外)
+notes/
+references/
